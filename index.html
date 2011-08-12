@@ -1,0 +1,143 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+
+<script>
+var contextRoot = "/tama/";
+function pollCall() {
+	$.getJSON("/kookoo-emulator/calls.jsp?phone=" + $('#phone').val() , function(data){
+		if (data.phone_no){
+			if (confirm("Incoming call.. Receive?")) {
+				 $('#phone').val(data.phone_no);
+				 $('#dosage_id').val(data.dosage_id);
+				 $('#regimen_id').val(data.regimen_id);
+				 $('#times_sent').val(data.times_sent);
+				 $('#total').val(data.total_times_to_send);
+			}
+		}
+		setTimeout(pollCall, 1000);
+	});
+}
+
+$(function(){
+	setTimeout(pollCall, 500);
+});
+
+
+function playfile(id) {
+	if (!$('#mute').is(":checked"))
+		document.getElementById(id).play();
+	//console.log(new Date());
+}
+
+function playAll(idx) {
+var duration = 0;
+var audioslist = $('.audio');
+var i = idx;
+if (typeof idx == "undefined") i=0;
+for (; i<audioslist.length; i++){
+	var ad = audioslist[i].id;
+	window.setTimeout("playfile('" + ad+ "');", (1+duration*1000));
+	if (isNaN(audioslist[i].duration)){ setTimeout("playAll(" + i + ")", 500);  return;}
+	else {
+		duration += audioslist[i].duration;
+	}
+}	
+}
+
+
+function call(path) {
+	try{
+	
+	$.ajax({url:path,
+			crossDomain:true,
+			success: function(data) {
+				//alert(data);
+				
+				var html = "";//'<audio controls="controls" id="message" autoplay="autoplay">';
+				//var msg = ""
+				$(data).find('playaudio').each(function() {
+					var filename = $(this).text().replace(/.*\//, "");
+					var text = filename.replace(/.wav/,"");
+					html += '<audio src="' + filename + '" autostart=false width=1 height=1 id="'+filename+'" enablejavascript="true" class="audio"/>' +
+					'<button id="' + filename+ '" onclick="play(\'' +filename+ '\');">&raquo;'+text+' </button>';
+					html += '<source src="' + filename+ '" type="audio/wave" />';
+					//msg+=text + " ";
+				});
+				//html += "</audio>";
+				//html ='<button  onclick="play(\'message\');">&raquo;'+msg+' </button><span style="float:right;">&nbsp;'+ html + '</span>';
+				$('#result').html(html);
+				
+				playAll();
+			    },
+			error:function(x, status, err) {alert('error ' + status + err);}
+			});	
+	} catch(e) {
+		alert(e);
+	}
+}
+function newCall(){
+	var phone = $('#phone').val();
+	call(contextRoot + 'ivr/reply?event=newcall&cid='+phone+'&data=1&sid=0000000000');
+}
+function endCall() {
+	var phone = $('#phone').val();
+	call(contextRoot + 'ivr/reply?event=hangup&cid='+phone+'&data=1&sid=0000000000');
+}
+function login() {
+	var pin = $('#pin').val();
+	var phone = $('#phone').val();
+	var dosageId = $('#dosage_id').val();
+	var regimen_id = $('#regimen_id').val();
+	var times_sent = $('#times_sent').val();
+	var total = $('#total').val();
+	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + pin + '&sid=0000000000&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+}
+function send(i){
+	var phone = $('#phone').val();
+	var dosageId = $('#dosage_id').val();
+	var regimen_id = $('#regimen_id').val();
+	var times_sent = $('#times_sent').val();
+	var total = $('#total').val();
+	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + i + '&sid=0000000000&tamaData={%27dosage_id%27:%27' + dosageId+ '%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+}
+function play(i){
+	var el = document.getElementById(i);
+	el.play();
+}
+
+</script>
+<style>
+.optional{
+	display:none;
+}
+</style>
+</head>
+<body>
+<div id="result">
+
+</div>
+<br/>
+<button onclick="newCall();">New Call</button>
+<button onclick="login();">Login</button>
+ <button onclick="endCall();">End Call</button> 
+ 
+ <table>
+ <tr><td><button onclick="send(1);">1</button> </td><td><button onclick="send(2);">2</button></td><td><button onclick="send(3);">3</button></td></tr>
+ <tr><td><button onclick="send(4);">4</button> </td><td><button onclick="send(5);">5</button></td><td><button onclick="send(6);">6</button></td></tr>
+ <tr><td><button onclick="send(7);">7</button> </td><td><button onclick="send(8);">8</button></td><td><button onclick="send(9);">9</button></td></tr>
+ <tr><td colspan="3" ><button onclick="send(0);">0</button></td></tr>
+</table>
+<br><br><br>
+<div><input type="checkbox" id="mute"></input> Mute audio</div>
+<button onclick="$('.optional').toggle(600);">Show / Hide Params</button>
+<table id="params">
+	<tr><td>Phone Number</td><td><input type="text" id="phone" value="0000000000"/></td><td>(From Tama patient profile)</td></tr>
+	<tr><td>PIN</td><td><input type="text" id="pin" value="1111"/></td></tr>
+	<tr class="optional"><td>Dosage Id</td><td><input type="text" id="dosage_id" value=""/></td><td>from couch db :motech-pillreminder (uuid something like 1d3d5270-9229-4ff8-95e7-1a93e6c6a6c6)</td></tr>
+	<tr class="optional"><td>Regimen Id</td><td><input type="text" id="regimen_id" value=""/></td><td>from couch db :motech-pillreminder (uuid)</td></tr>
+	<tr class="optional"><td>Number of call retries</td><td><input type="text" id="times_sent" value="1"/></td><td>Incase of retry calls last call message will be different</td></tr>
+	<tr class="optional"><td>Total retries </td><td><input type="text" id="total" value="3"/></td></tr>
+</table>	
+</body>
+</html>
