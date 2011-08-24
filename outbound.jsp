@@ -16,10 +16,11 @@ System.out.println("\n" + tamaData + "\n");
 
 try {
 JSONObject jsobject = new JSONObject(tamaData);
-application.setAttribute( "regimen_id", jsobject.getString("regimen_id"));
 application.setAttribute( "total_times_to_send", jsobject.getString("total_times_to_send"));
 application.setAttribute( "times_sent", jsobject.getString("times_sent"));
 application.setAttribute( "dosage_id", jsobject.getString("dosage_id"));
+if (jsobject.has("regimen_id"))
+	application.setAttribute( "regimen_id", jsobject.getString("regimen_id"));
 } catch(Exception e) {
 	e.printStackTrace();
 }

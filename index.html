@@ -4,7 +4,10 @@
 
 <script>
 var contextRoot = "/tama/";
+var collectdtmf = 1;
+var dtmf = "";
 function pollCall() {
+	if ($('#poll_call').is(':checked')	)
 	$.getJSON("/kookoo-emulator/calls.jsp?phone=" + $('#phone').val() , function(data){
 		if (data.phone_no){
 			if (confirm("Incoming call.. Receive?")) {
@@ -56,6 +59,7 @@ function call(path) {
 				
 				var html = "";//'<audio controls="controls" id="message" autoplay="autoplay">';
 				//var msg = ""
+				collectdtmf = $(data).find('collectdtmf').attr('l');
 				$(data).find('playaudio').each(function() {
 					var filename = $(this).text().replace(/.*\//, "");
 					var text = filename.replace(/.wav/,"");
@@ -63,6 +67,9 @@ function call(path) {
 					'<button id="' + filename+ '" onclick="play(\'' +filename+ '\');">&raquo;'+text+' </button>';
 					html += '<source src="' + filename+ '" type="audio/wave" />';
 					//msg+=text + " ";
+				});
+				$(data).find('playtext').each(function() {
+					html+= "<div>" +  $(this).text() + "</div>"
 				});
 				//html += "</audio>";
 				//html ='<button  onclick="play(\'message\');">&raquo;'+msg+' </button><span style="float:right;">&nbsp;'+ html + '</span>';
@@ -78,11 +85,11 @@ function call(path) {
 }
 function newCall(){
 	var phone = $('#phone').val();
-	call(contextRoot + 'ivr/reply?event=newcall&cid='+phone+'&data=1&sid=0000000000');
+	call(contextRoot + 'ivr/reply?event=newcall&cid='+phone+'&sid=0000000000');
 }
 function endCall() {
 	var phone = $('#phone').val();
-	call(contextRoot + 'ivr/reply?event=hangup&cid='+phone+'&data=1&sid=0000000000');
+	call(contextRoot + 'ivr/reply?event=hangup&cid='+phone+'&sid=0000000000');
 }
 function login() {
 	var pin = $('#pin').val();
@@ -91,15 +98,26 @@ function login() {
 	var regimen_id = $('#regimen_id').val();
 	var times_sent = $('#times_sent').val();
 	var total = $('#total').val();
-	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + pin + '&sid=0000000000&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
+	var tamaData = ($('#symptoms_reporting').is(":checked"))?"":('&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + pin + '&sid=0000000000' + tamaData + symptoms_reporting_option);
 }
 function send(i){
+	dtmf += i;
+	if (typeof collectdtmf != "undefined" && collectdtmf>dtmf.length) {
+		return;
+	}
+
+
 	var phone = $('#phone').val();
 	var dosageId = $('#dosage_id').val();
 	var regimen_id = $('#regimen_id').val();
 	var times_sent = $('#times_sent').val();
 	var total = $('#total').val();
-	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + i + '&sid=0000000000&tamaData={%27dosage_id%27:%27' + dosageId+ '%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
+	var tamaData = ($('#symptoms_reporting').is(":checked"))?"":('&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + dtmf + '&sid=0000000000' + tamaData + symptoms_reporting_option);
+	dtmf="";
 }
 function play(i){
 	var el = document.getElementById(i);
@@ -126,10 +144,12 @@ function play(i){
  <tr><td><button onclick="send(1);">1</button> </td><td><button onclick="send(2);">2</button></td><td><button onclick="send(3);">3</button></td></tr>
  <tr><td><button onclick="send(4);">4</button> </td><td><button onclick="send(5);">5</button></td><td><button onclick="send(6);">6</button></td></tr>
  <tr><td><button onclick="send(7);">7</button> </td><td><button onclick="send(8);">8</button></td><td><button onclick="send(9);">9</button></td></tr>
- <tr><td colspan="3" ><button onclick="send(0);">0</button></td></tr>
+ <tr><td colspan="2" ><button onclick="send(0);">0</button></td><td><button onclick="send('');">blank</button></td></tr>
 </table>
 <br><br><br>
-<div><input type="checkbox" id="mute"></input> Mute audio</div>
+<div><input type="checkbox" id="mute"></input> Mute audio <span><input type="checkbox" id="symptoms_reporting"></input> Symptoms Reporting call
+<input type="checkbox" id="poll_call" checked></input> Accept incoming call
+</span></div>
 <button onclick="$('.optional').toggle(600);">Show / Hide Params</button>
 <table id="params">
 	<tr><td>Phone Number</td><td><input type="text" id="phone" value="0000000000"/></td><td>(From Tama patient profile)</td></tr>
