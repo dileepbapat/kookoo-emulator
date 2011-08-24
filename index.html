@@ -103,9 +103,12 @@ function login() {
 	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + pin + '&sid=0000000000' + tamaData + symptoms_reporting_option);
 }
 function send(i){
-	dtmf += i;
-	if (typeof collectdtmf != "undefined" && collectdtmf>dtmf.length) {
-		return;
+	if (i=='') dtmf=i;
+	else {
+		dtmf += i;
+		if (typeof collectdtmf != "undefined" && collectdtmf>dtmf.length) {
+			return;
+		}
 	}
 
 
