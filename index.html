@@ -101,7 +101,9 @@ function login() {
 	var times_sent = $('#times_sent').val();
 	var total = $('#total').val();
 	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
-	var tamaData = ($('#symptoms_reporting').is(":checked"))?"":('&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+	var tamaData = "";
+	if (dosageId != '')
+		tamaData = ($('#symptoms_reporting').is(":checked"))?"":('&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
 	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + pin + '&sid=0000000000' + tamaData + symptoms_reporting_option);
 }
 function send(i){
@@ -120,7 +122,9 @@ function send(i){
 	var times_sent = $('#times_sent').val();
 	var total = $('#total').val();
 	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
-	var tamaData = ($('#symptoms_reporting').is(":checked"))?"":('&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+	var tamaData = "";
+	if (dosageId != '')
+		tamaData = ($('#symptoms_reporting').is(":checked"))?"":('&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
 	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + dtmf + '&sid=0000000000' + tamaData + symptoms_reporting_option);
 	dtmf="";
 }
