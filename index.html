@@ -61,7 +61,7 @@ function call(path) {
 				//var msg = ""
 				collectdtmf = $(data).find('collectdtmf').attr('l');
 				$(data).find('playaudio').each(function() {
-					var filename = $(this).text().replace(/.*\//, "");
+					var filename = $(this).text();//.replace(/.*\//, "");
 					var text = filename.replace(/.wav/,"");
 					html += '<audio src="' + filename + '" autostart=false width=1 height=1 id="'+filename+'" enablejavascript="true" class="audio"/>' +
 					'<button id="' + filename+ '" onclick="play(\'' +filename+ '\');">&raquo;'+text+' </button>';
@@ -85,11 +85,13 @@ function call(path) {
 }
 function newCall(){
 	var phone = $('#phone').val();
-	call(contextRoot + 'ivr/reply?event=newcall&cid='+phone+'&sid=0000000000');
+	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
+	call(contextRoot + 'ivr/reply?event=newcall&cid='+phone+'&sid=0000000000' + symptoms_reporting_option);
 }
 function endCall() {
 	var phone = $('#phone').val();
-	call(contextRoot + 'ivr/reply?event=hangup&cid='+phone+'&sid=0000000000');
+	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
+	call(contextRoot + 'ivr/reply?event=hangup&cid='+phone+'&sid=0000000000' + symptoms_reporting_option);
 }
 function login() {
 	var pin = $('#pin').val();
