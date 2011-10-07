@@ -101,10 +101,10 @@ function login() {
 	var times_sent = $('#times_sent').val();
 	var total = $('#total').val();
 	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
-	var tamaData = "";
+	var dataMap = "";
 	if (dosageId != '')
-		tamaData = ($('#symptoms_reporting').is(":checked"))?"":('&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
-	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + pin + '&sid=0000000000' + tamaData + symptoms_reporting_option);
+		dataMap = ($('#symptoms_reporting').is(":checked"))?"":('&dataMap={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + pin + '&sid=0000000000' + dataMap + symptoms_reporting_option);
 }
 function send(i){
 	if (i==='') dtmf=i;
@@ -122,10 +122,10 @@ function send(i){
 	var times_sent = $('#times_sent').val();
 	var total = $('#total').val();
 	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
-	var tamaData = "";
+	var dataMap = "";
 	if (dosageId != '')
-		tamaData = ($('#symptoms_reporting').is(":checked"))?"":('&tamaData={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
-	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + dtmf + '&sid=0000000000' + tamaData + symptoms_reporting_option);
+		dataMap = ($('#symptoms_reporting').is(":checked"))?"":('&dataMap={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + dtmf + '&sid=0000000000' + dataMap + symptoms_reporting_option);
 	dtmf="";
 }
 function play(i){
@@ -161,7 +161,7 @@ function play(i){
 </span></div>
 <button onclick="$('.optional').toggle(600);">Show / Hide Params</button>
 <table id="params">
-	<tr><td>Phone Number</td><td><input type="text" id="phone" value="0000000000"/></td><td>(From Tama patient profile)</td></tr>
+	<tr><td>Phone Number</td><td><input type="text" id="phone" value="1234567899"/></td><td>(From Tama patient profile)</td></tr>
 	<tr><td>PIN</td><td><input type="text" id="pin" value="1111"/></td></tr>
 	<tr class="optional"><td>Dosage Id</td><td><input type="text" id="dosage_id" value=""/></td><td>from couch db :motech-pillreminder (uuid something like 1d3d5270-9229-4ff8-95e7-1a93e6c6a6c6)</td></tr>
 	<tr class="optional"><td>Regimen Id</td><td><input type="text" id="regimen_id" value=""/></td><td>from couch db :motech-pillreminder (uuid)</td></tr>
