@@ -8,7 +8,7 @@ var collectdtmf = 1;
 var dtmf = "";
 function pollCall() {
 	if ($('#poll_call').is(':checked')	)
-	$.getJSON("/kookoo-emulator/calls.jsp?phone=" + $('#phone').val() , function(data){
+	$.getJSON("/tama/emulator/calls.jsp?phone=" + $('#phone').val() , function(data){
 		if (data.phone_no){
 			if (confirm("Incoming call.. Receive?")) {
 				 $('#phone').val(data.phone_no);
@@ -16,6 +16,8 @@ function pollCall() {
 				 $('#regimen_id').val(data.regimen_id);
 				 $('#times_sent').val(data.times_sent);
 				 $('#total').val(data.total_times_to_send);
+				 $('#call_id').val(data.call_id);
+				 $('#is_outbound_call').val(data.is_outbound_call);
 			}
 		}
 		setTimeout(pollCall, 1000);
@@ -86,12 +88,12 @@ function call(path) {
 function newCall(){
 	var phone = $('#phone').val();
 	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
-	call(contextRoot + 'ivr/reply?event=newcall&cid='+phone+'&sid=0000000000' + symptoms_reporting_option);
+	call(contextRoot + 'ivr/reply?event=NewCall&cid='+phone+'&sid=0000000000' + symptoms_reporting_option);
 }
 function endCall() {
 	var phone = $('#phone').val();
 	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
-	call(contextRoot + 'ivr/reply?event=hangup&cid='+phone+'&sid=0000000000' + symptoms_reporting_option);
+	call(contextRoot + 'ivr/reply?event=Hangup&cid='+phone+'&sid=0000000000' + symptoms_reporting_option);
 }
 function login() {
 	var pin = $('#pin').val();
@@ -100,11 +102,13 @@ function login() {
 	var regimen_id = $('#regimen_id').val();
 	var times_sent = $('#times_sent').val();
 	var total = $('#total').val();
+	var call_id = $('#call_id').val();
+	var is_outbound_call = $('#is_outbound_call').val();
 	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
 	var dataMap = "";
 	if (dosageId != '')
-		dataMap = ($('#symptoms_reporting').is(":checked"))?"":('&dataMap={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
-	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + pin + '&sid=0000000000' + dataMap + symptoms_reporting_option);
+		dataMap = ($('#symptoms_reporting').is(":checked"))?"":('&dataMap={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27, %27call_id%27:%27'+call_id+'%27, %27is_outbound_call%27:%27'+is_outbound_call+'%27}');
+	call(contextRoot + 'ivr/reply?event=GotDTMF&cid='+phone+'&data=' + pin + '&sid=0000000000' + dataMap + symptoms_reporting_option);
 }
 function send(i){
 	if (i==='') dtmf=i;
@@ -125,7 +129,7 @@ function send(i){
 	var dataMap = "";
 	if (dosageId != '')
 		dataMap = ($('#symptoms_reporting').is(":checked"))?"":('&dataMap={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
-	call(contextRoot + 'ivr/reply?event=gotdtmf&cid='+phone+'&data=' + dtmf + '&sid=0000000000' + dataMap + symptoms_reporting_option);
+	call(contextRoot + 'ivr/reply?event=GotDTMF&cid='+phone+'&data=' + dtmf + '&sid=0000000000' + dataMap + symptoms_reporting_option);
 	dtmf="";
 }
 function play(i){
@@ -167,6 +171,8 @@ function play(i){
 	<tr class="optional"><td>Regimen Id</td><td><input type="text" id="regimen_id" value=""/></td><td>from couch db :motech-pillreminder (uuid)</td></tr>
 	<tr class="optional"><td>Number of call retries</td><td><input type="text" id="times_sent" value="1"/></td><td>Incase of retry calls last call message will be different</td></tr>
 	<tr class="optional"><td>Total retries </td><td><input type="text" id="total" value="3"/></td></tr>
+	<tr class="optional"><td>call id</td><td><input type="text" id="call_id" value="3"/></td></tr>
+	<tr class="optional"><td>outbound call?</td><td><input type="text" id="is_outbound_call" value="3"/></td></tr>
 </table>	
 </body>
 </html>

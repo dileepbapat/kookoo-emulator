@@ -6,7 +6,9 @@ if (phone != null && phone.length()>0){
 				"\"regimen_id\":\"" + (String)application.getAttribute("regimen_id") + "\"," +
 				"\"total_times_to_send\":" + (String)application.getAttribute("total_times_to_send") + "," + 
 				"\"times_sent\":" + (String)application.getAttribute("times_sent") + "," + 
-				"\"dosage_id\":\"" + (String)application.getAttribute("dosage_id") + "\"" +
+				"\"dosage_id\":\"" + (String)application.getAttribute("dosage_id") + "\"," +
+				"\"call_id\":\"" + (String)application.getAttribute("call_id") + "\"," +
+				"\"is_outbound_call\":\"" + (String)application.getAttribute("is_outbound_call") + "\"" +
 			   "}");
 	application.setAttribute("phone_no", null);
 } else {
