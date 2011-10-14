@@ -106,7 +106,7 @@ function login() {
 	var is_outbound_call = $('#is_outbound_call').val();
 	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
 	var dataMap = "";
-	if (dosageId != '')
+	if (is_outbound_call == 'true')
 		dataMap = ($('#symptoms_reporting').is(":checked"))?"":('&dataMap={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27, %27call_id%27:%27'+call_id+'%27, %27is_outbound_call%27:%27'+is_outbound_call+'%27}');
 	call(contextRoot + 'ivr/reply?event=GotDTMF&cid='+phone+'&data=' + pin + '&sid=0000000000' + dataMap + symptoms_reporting_option);
 }
@@ -126,9 +126,10 @@ function send(i){
 	var times_sent = $('#times_sent').val();
 	var total = $('#total').val();
 	var symptoms_reporting_option = ($('#symptoms_reporting').is(":checked")?"&symptoms_reporting=true":"");
+	var is_outbound_call = $('#is_outbound_call').val();
 	var dataMap = "";
-	if (dosageId != '')
-		dataMap = ($('#symptoms_reporting').is(":checked"))?"":('&dataMap={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27}');
+	if (is_outbound_call == 'true')
+		dataMap = ($('#symptoms_reporting').is(":checked"))?"":('&dataMap={%27dosage_id%27:%27'+dosageId+'%27, %27regimen_id%27:%27' + regimen_id + '%27, %27times_sent%27:%27' +times_sent+'%27, %27total_times_to_send%27:%27'+total+'%27, %27is_outbound_call%27:%27'+is_outbound_call+'%27}');
 	call(contextRoot + 'ivr/reply?event=GotDTMF&cid='+phone+'&data=' + dtmf + '&sid=0000000000' + dataMap + symptoms_reporting_option);
 	dtmf="";
 }
@@ -171,8 +172,8 @@ function play(i){
 	<tr class="optional"><td>Regimen Id</td><td><input type="text" id="regimen_id" value=""/></td><td>from couch db :motech-pillreminder (uuid)</td></tr>
 	<tr class="optional"><td>Number of call retries</td><td><input type="text" id="times_sent" value="1"/></td><td>Incase of retry calls last call message will be different</td></tr>
 	<tr class="optional"><td>Total retries </td><td><input type="text" id="total" value="3"/></td></tr>
-	<tr class="optional"><td>call id</td><td><input type="text" id="call_id" value="3"/></td></tr>
-	<tr class="optional"><td>outbound call?</td><td><input type="text" id="is_outbound_call" value="3"/></td></tr>
+	<tr class="optional"><td>call id</td><td><input type="text" id="call_id" value=""/></td></tr>
+	<tr class="optional"><td>outbound call?</td><td><input type="text" id="is_outbound_call" value="false"/></td></tr>
 </table>	
 </body>
 </html>
