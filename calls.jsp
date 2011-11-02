@@ -8,6 +8,7 @@ if (phone != null && phone.length()>0){
 				"\"times_sent\":" + (String)application.getAttribute("times_sent") + "," + 
 				"\"dosage_id\":\"" + (String)application.getAttribute("dosage_id") + "\"," +
 				"\"call_id\":\"" + (String)application.getAttribute("call_id") + "\"," +
+				"\"outbox_call\":\"" + (String)application.getAttribute("outbox_call") + "\"," +
 				"\"is_outbound_call\":\"" + (String)application.getAttribute("is_outbound_call") + "\"" +
 			   "}");
 	application.setAttribute("phone_no", null);

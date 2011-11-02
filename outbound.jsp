@@ -27,6 +27,7 @@ application.setAttribute( "dosage_id", jsobject.getString("dosage_id"));
 if (jsobject.has("regimen_id"))	application.setAttribute( "regimen_id", jsobject.getString("regimen_id"));
 if (jsobject.has("call_id"))	application.setAttribute( "call_id", jsobject.getString("call_id"));
 if (jsobject.has("is_outbound_call"))	application.setAttribute( "is_outbound_call", jsobject.getString("is_outbound_call"));
+if (jsobject.has("outbox_call"))	application.setAttribute( "outbox_call", jsobject.getString("outbox_call"));
 } catch(Exception e) {
 	e.printStackTrace();
 }
